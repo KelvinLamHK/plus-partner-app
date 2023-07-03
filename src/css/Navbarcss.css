@@ -1,0 +1,32 @@
+a {
+  text-decoration: none;
+}
+
+#dropdown-basic {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  -bs-btn-border-color: transparent;
+  border-color: transparent !important;
+}
+
+#dropdown-basic-unactive {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  -bs-btn-border-color: transparent;
+  border-color: transparent !important;
+}
+
+
+.pointer:hover {
+  cursor: pointer;
+}
+
+.r-nav {
+  opacity: 0;
+}
+
+@media (min-width: 1250px) {
+  .r-nav {
+    opacity: 1;
+  }
+}

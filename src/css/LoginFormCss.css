@@ -1,0 +1,35 @@
+.user-box input{
+    position: relative; 
+    width: 100%;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #272b30;
+    margin-bottom: 25px;
+    border: none;
+    border-bottom: 1px solid #d6dee1;
+    outline: none;
+    background: transparent;
+}
+
+.user-box label{
+    position: relative;
+    left: 0!important;
+    top:-60px;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #272b30;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+.user-box input:focus ~ label,
+.user-box input:valid ~ label{
+top: -85px;
+left: 0;
+color: #272b30;
+font-size: 12px;
+}
+
+.btn-primary{
+    background-color: #004846!important;
+}

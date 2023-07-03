@@ -1,0 +1,7 @@
+.campaign {
+    stroke: #009188;
+  }
+  
+  .campaign:hover {
+    stroke: #004846;
+  }

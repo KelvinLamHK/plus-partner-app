@@ -1,0 +1,24 @@
+.titlebar{
+    width:100%;
+    border-radius: 3px;
+    padding: 15px;
+    /* background: linear-gradient(60deg,#004846,#009188); */
+    background: #009188;
+    -webkit-box-shadow: 0 12px 20px -10px rgb(0% 28.2% 27.5% / 28%), 0 4px 20px 0 rgb(0 0 0 / 12%), 0 7px 8px -5px rgb(0% 28.2% 27.5% / 20%);
+    box-shadow: 0 12px 20px -10px rgb(0% 28.2% 27.5% / 28%), 0 4px 20px 0 rgb(0 0 0 / 12%), 0 7px 8px -5px rgb(0% 28.2% 27.5% / 20%);
+}
+
+.rounded{
+    height: 95%;
+}
+
+@media (max-width: 1204px) {
+    .margin {
+      margin-top:12px;
+    }
+  }
+
+  .bg{
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 50%)!important;
+  }
+  
