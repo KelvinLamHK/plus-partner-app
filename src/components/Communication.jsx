@@ -10,6 +10,8 @@ import Stack from '@mui/material/Stack';
 import ScrollToTopButton from './ScrollToTopButton';
 
 function Communication(props) {
+  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [editIsOpen, setEditIsOpen] = useState(false);
   const [endDate, setEndDate] = useState('');
@@ -105,6 +107,31 @@ function Communication(props) {
 
   const closeEdit = () => {
     setEditIsOpen(false);
+    setIsPin("N")
+    setContentChiName("")
+    setContentEngName("")
+    setContentSimName("")
+    setStartDate("")
+    setEndDate("")
+  };
+
+  const showEditMobile = (data) => {
+    const startDate = new Date(data.startDate);
+    const endDate = new Date(data.endDate);
+    const formattedStartDate = startDate.toISOString().slice(0, 10);
+    const formattedEndDate = endDate.toISOString().slice(0, 10);
+    setCommuncationId(data.communicationId)
+    setIsPin(data.isPin)
+    setContentChiName(data.contentChiName)
+    setContentEngName(data.contentEngName)
+    setContentSimName(data.contentSimName)
+    setStartDate(formattedStartDate)
+    setEndDate(formattedEndDate)
+    setShowEditModal(true);
+  };
+
+  const closeEditMobile = () => {
+    setShowEditModal(false);
     setIsPin("N")
     setContentChiName("")
     setContentEngName("")
@@ -296,6 +323,15 @@ function Communication(props) {
     }
   }
 
+  const showCreateMobile = () =>{
+    setShowModal(true)
+  }
+
+  const closeCreateMobile = () =>{
+    setShowModal(false)
+  }
+
+
   return (
     <>
 {isMobileScreen ?
@@ -305,7 +341,7 @@ function Communication(props) {
     <h1>Broker Communication</h1>
   </div>
              <div className='mt-4 flex'>
-             <a className='bg-ft-light text-center w-full text-white py-3 rounded hover:bg-ft active:bg-white active:text-ft active:ring-1 active:ring-ft'>
+             <a onClick={()=> showCreateMobile()} className='bg-ft-light text-center w-full text-white py-3 rounded hover:bg-ft active:bg-white active:text-ft active:ring-1 active:ring-ft'>
               Create
              </a>
            </div>
@@ -332,7 +368,193 @@ onChange={handleChange}
 
 </div>
 
+{showModal ? (
+        <>
+         <div
+            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+          >
+              <div className="relative w-5/6 my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none p-5">
+               
+              <form onSubmit={handleSubmit}>
+          <div className='w-auto flex-col min-w-link'>
+            <div className='flex'>
+                <div className='w-1/2 mr-5'>
+                <label htmlFor='startDate'>Start Date:</label>
+                <input
+                    type='date'
+                    id='startDate'
+                    value={startDate}
+                    className='w-full ring-ft-light focus:border-0 border-gray-500'
+                    required
+                    onChange={(e) => setStartDate(e.target.value)}
+                />
+                </div>
+                <div className='w-1/2'>
+                <label htmlFor='endDate'>End Date:</label>
+                <input
+                    type='date'
+                    id='endDate'
+                    value={endDate}
+                    className='w-full ring-ft-light focus:border-0 border-gray-500'
+                    required
+                    onChange={(e) => setEndDate(e.target.value)}
+                />
+                </div>
+            </div>
+            <div className='mt-3'>
+              <label htmlFor='contentEngName'>Content(Eng):</label>
+              <input
+                type='text'
+                id='contentEngName'
+                value={contentEngName}
+                className='w-full ring-ft-light focus:border-0 border-gray-500'
+                required
+                onChange={(e) => setContentEngName(e.target.value)}
+              />
+            </div>
+            <div className='mt-3'>
+              <label htmlFor='contentChiName'>Content(Trad):</label>
+              <input
+                type='text'
+                id='contentChiName'
+                value={contentChiName}
+                className='w-full ring-ft-light focus:border-0 border-gray-500'
+                required
+                onChange={(e) => setContentChiName(e.target.value)}
+              />
+            </div>
+            <div className='mt-3'>
+              <label htmlFor='contentSimName'>Content(Simp):</label>
+              <input
+                type='text'
+                id='contentSimName'
+                value={contentSimName}
+                className='w-full ring-ft-light focus:border-0 border-gray-500'
+                required
+                onChange={(e) => setContentSimName(e.target.value)}
+              />
+            </div>
+            <div className='mt-3'>
+                <label className="mr-2" htmlFor='isPin'>Pin:</label>
+                <input
+                    type='checkbox'
+                    id='isPin'
+                    value={isPin}
+                    className='text-black ring-0'
+                    checked={isPin === 'Y'}
+                    onChange={(e) => setIsPin(e.target.checked ? 'Y' : 'N')}
+                />
+            </div>
+          </div>
+          <div className='w-auto max-w-96 flex mt-4'>
+            <button type='submit' className='w-1/2 mr-5 px-3 py-2 ring-ft-light bg-ft-light text-white rounded ring-1 active:bg-ft active:ring-ft'>Create</button>
+            <button type='button' className='w-1/2 rounded px-3 py-2 ring-1 ring-ft-light' onClick={()=> closeCreateMobile()}>
+              Cancel
+            </button>
+          </div>
+        </form>
+</div>
+</div>
+</div>
+<div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
 
+{showEditModal ? (
+        <>
+         <div
+            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+          >
+              <div className="relative w-5/6 my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none p-5">
+               
+              <form onSubmit={handleEdit}>
+        <div className='w-link flex-col'>
+            <div className='flex'>
+                <div className='w-1/2 mr-5'>
+                <label htmlFor='startDate'>Start Date:</label>
+                <input
+                    type='date'
+                    id='startDate'
+                    value={startDate}
+                    className='w-full ring-ft-light focus:border-0 border-gray-500'
+                    required
+                    onChange={(e) => setStartDate(e.target.value)}
+                />
+                </div>
+                <div className='w-1/2'>
+                <label htmlFor='endDate'>End Date:</label>
+                <input
+                    type='date'
+                    id='endDate'
+                    value={startDate}
+                    className='w-full ring-ft-light focus:border-0 border-gray-500'
+                    required
+                    onChange={(e) => setEndDate(e.target.value)}
+                />
+                </div>
+            </div>
+            <div className='mt-3'>
+              <label htmlFor='contentEngName'>Content(Eng):</label>
+              <input
+                type='text'
+                id='contentEngName'
+                value={contentEngName}
+                className='w-full ring-ft-light focus:border-0 border-gray-500'
+                required
+                onChange={(e) => setContentEngName(e.target.value)}
+              />
+            </div>
+            <div className='mt-3'>
+              <label htmlFor='contentChiName'>Content(Trad):</label>
+              <input
+                type='text'
+                id='contentChiName'
+                value={contentChiName}
+                className='w-full ring-ft-light focus:border-0 border-gray-500'
+                required
+                onChange={(e) => setContentChiName(e.target.value)}
+              />
+            </div>
+            <div className='mt-3'>
+              <label htmlFor='contentSimName'>Content(Simp):</label>
+              <input
+                type='text'
+                id='contentSimName'
+                value={contentSimName}
+                className='w-full ring-ft-light focus:border-0 border-gray-500'
+                required
+                onChange={(e) => setContentSimName(e.target.value)}
+              />
+            </div>
+                <div className='mt-3'>
+                    <label className="mr-2" htmlFor='isPin'>Pin:</label>
+                    <input
+                        type='checkbox'
+                        id='isPin'
+                        value={isPin}
+                        className='text-black ring-0'
+                        checked={isPin === 'Y'}
+                        onChange={(e) => setIsPin(e.target.checked ? 'Y' : 'N')}
+                    />
+                </div>
+          </div>
+          <div className='w-auto max-w-96 flex mt-4'>
+            <button type='submit' className='w-1/2 mr-5 px-3 py-2 ring-ft-light bg-ft-light text-white rounded ring-1 active:bg-ft active:ring-ft'>Save</button>
+            <button type='button' className='w-1/2 rounded px-3 py-2 ring-1 ring-ft-light' onClick={()=> closeEditMobile()}>
+              Cancel
+            </button>
+          </div>
+        </form>
+</div>
+</div>
+</div>
+<div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
 <div className="flex">
   <table className=" flex w-full bg-white">
     <thead className="sm:w-1/5 w-2/5 text-white">
@@ -379,7 +601,7 @@ onChange={handleChange}
 
 
 <td className='pl-3 pr-3 h-8'>
-            <a onClick={() => openEdit(campaign)}>
+            <a onClick={() => showEditMobile(campaign)}>
                 <svg className='campaign h-6' fill="none"  viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
                 </svg>

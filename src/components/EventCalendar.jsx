@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState, useEffect } from 'react';
 import '../css/campaignListcss.css';
 import '../css/lineclamp2css.css';
@@ -6,8 +7,11 @@ import Modal from 'react-modal';
 import Swal from 'sweetalert2';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import ScrollToTopButton from './ScrollToTopButton';
 
 function EventCalendar(props) {
+  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [editIsOpen, setEditIsOpen] = useState(false);
   const [endDate, setEndDate] = useState('');
@@ -22,6 +26,7 @@ function EventCalendar(props) {
   const [nextResult, setNextResult] = useState();
   const [pagination, setPagination] = useState({});
   const [selectedValue, setSelectedValue] = useState("10");
+  const [isMobileScreen, setIsMobileScreen] = useState(((window.innerWidth <= 1250)?true:false));
   const [postData, setPostData] = useState({
     pageableParameter: {
       pageNumber: 0,
@@ -30,6 +35,23 @@ function EventCalendar(props) {
       orderSequence: "desc"
     }
   });
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobileScreen(window.innerWidth <= 1250);
+      // setXsIsMobileScreen(window.screen.width<= 385);
+    }
+  
+    handleResize();
+    window.addEventListener("resize", handleResize);
+  
+    // Add this block to update isMobileScreen when the screen size is larger than 1207 pixels
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      setIsMobileScreen(false);
+      // setXsIsMobileScreen(false);
+    };
+  }, []);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/cms/events`, {
@@ -114,6 +136,37 @@ function EventCalendar(props) {
     setStartDate("")
     setEndDate("")
   };
+
+  const showEditMobile = (data) => {
+    const startDate = new Date(data.startDate);
+    const endDate = new Date(data.endDate);
+    const formattedStartDate = startDate.toISOString().slice(0, 10);
+    const formattedEndDate = endDate.toISOString().slice(0, 10);
+    setEventId(data.eventId)
+    setEventEngName(data.eventEngName)
+    setEventChiName(data.eventChiName)
+    setEventSimName(data.eventSimName)
+    setStartDate(formattedStartDate)
+    setEndDate(formattedEndDate)
+    setShowEditModal(true);
+  };
+
+  const closeEditMobile = () => {
+    setShowEditModal(false);
+    setEventChiName("")
+    setEventEngName("")
+    setEventSimName("")
+    setStartDate("")
+    setEndDate("")
+  };
+
+  const showCreateMobile = () =>{
+    setShowModal(true)
+  }
+
+  const closeCreateMobile = () =>{
+    setShowModal(false)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -270,14 +323,308 @@ function EventCalendar(props) {
 
   return (
     <>
+{isMobileScreen ?
+(<>
+  <div className='w-full '>
+  <div className=''>
+    <h1>Event Calendar</h1>
+  </div>
+             <div className='mt-4 flex'>
+             <a onClick={()=> showCreateMobile()} className='bg-ft-light text-center w-full text-white py-3 rounded hover:bg-ft active:bg-white active:text-ft active:ring-1 active:ring-ft'>
+              Create
+             </a>
+           </div>
+        
 
+
+
+<div className='mt-4'>
+  <p>Show
+  <select
+id="countries"
+aria-label="Select page size"
+className="mx-2 w-20 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-ft-light focus:border-ft-light p-2.5"
+value={selectedValue}
+onChange={handleChange}
+>
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select> 
+    records per page.
+  </p>
+
+</div>
+
+{showModal ? (
+        <>
+         <div
+            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+          >
+              <div className="relative w-5/6 my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none p-4">
+               
+              <form onSubmit={handleSubmit}>
+  <div className='w-link flex-col'>
+    <div className='flex'>
+        <div className='w-1/2 mr-5'>
+        <label htmlFor='startDate'>Start Date:</label>
+        <input
+            type='date'
+            id='startDate'
+            value={startDate}
+            className='w-full ring-ft-light focus:border-0 border-gray-500'
+            required
+            onChange={(e) => setStartDate(e.target.value)}
+        />
+        </div>
+        <div className='w-1/2'>
+        <label htmlFor='endDate'>End Date:</label>
+        <input
+            type='date'
+            id='endDate'
+            value={endDate}
+            className='w-full ring-ft-light focus:border-0 border-gray-500'
+            required
+            onChange={(e) => setEndDate(e.target.value)}
+        />
+        </div>
+    </div>
+    <div className='mt-3'>
+      <label htmlFor='eventEngName'>Content(Eng):</label>
+      <input
+        type='text'
+        id='eventEngName'
+        value={eventEngName}
+        className='w-full ring-ft-light focus:border-0 border-gray-500'
+        required
+        onChange={(e) => setEventEngName(e.target.value)}
+      />
+    </div>
+    <div className='mt-3'>
+      <label htmlFor='eventChiName'>Content(Trad):</label>
+      <input
+        type='text'
+        id='eventChiName'
+        value={eventChiName}
+        className='w-full ring-ft-light focus:border-0 border-gray-500'
+        required
+        onChange={(e) => setEventChiName(e.target.value)}
+      />
+    </div>
+    <div className='mt-3'>
+      <label htmlFor='eventSimName'>Content(Simp):</label>
+      <input
+        type='text'
+        id='eventSimName'
+        value={eventSimName}
+        className='w-full ring-ft-light focus:border-0 border-gray-500'
+        required
+        onChange={(e) => setEventSimName(e.target.value)}
+      />
+    </div>
+ 
+  </div>
+  <div className='w-auto max-w-96 flex mt-4'>
+    <button type='submit' className='w-1/2 mr-5 px-3 py-2 ring-ft-light bg-ft-light text-white rounded ring-1 active:bg-ft active:ring-ft'>Create</button>
+    <button type='button' className='w-1/2 rounded px-3 py-2 ring-1 ring-ft-light' onClick={()=> closeCreateMobile()}>
+      Cancel
+    </button>
+  </div>
+</form>
+</div>
+</div>
+</div>
+<div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
+
+{showEditModal ? (
+        <>
+         <div
+            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+          >
+              <div className="relative w-5/6 my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none p-4">
+               
+              <form onSubmit={handleEdit}>
+<div className='w-link flex-col'>
+    <div className='flex'>
+        <div className='w-1/2 mr-5'>
+        <label htmlFor='startDate'>Start Date:</label>
+        <input
+            type='date'
+            id='startDate'
+            value={startDate}
+            className='w-full ring-ft-light focus:border-0 border-gray-500'
+            required
+            onChange={(e) => setStartDate(e.target.value)}
+        />
+        </div>
+        <div className='w-1/2'>
+        <label htmlFor='endDate'>End Date:</label>
+        <input
+            type='date'
+            id='endDate'
+            value={startDate}
+            className='w-full ring-ft-light focus:border-0 border-gray-500'
+            required
+            onChange={(e) => setEndDate(e.target.value)}
+        />
+        </div>
+    </div>
+    <div className='mt-3'>
+      <label htmlFor='eventEngName'>Content(Eng):</label>
+      <input
+        type='text'
+        id='eventEngName'
+        value={eventEngName}
+        className='w-full ring-ft-light focus:border-0 border-gray-500'
+        required
+        onChange={(e) => setEventEngName(e.target.value)}
+      />
+    </div>
+    <div className='mt-3'>
+      <label htmlFor='eventChiName'>Content(Trad):</label>
+      <input
+        type='text'
+        id='eventChiName'
+        value={eventChiName}
+        className='w-full ring-ft-light focus:border-0 border-gray-500'
+        required
+        onChange={(e) => setEventChiName(e.target.value)}
+      />
+    </div>
+    <div className='mt-3'>
+      <label htmlFor='eventSimName'>Content(Simp):</label>
+      <input
+        type='text'
+        id='eventSimName'
+        value={eventSimName}
+        className='w-full ring-ft-light focus:border-0 border-gray-500'
+        required
+        onChange={(e) => setEventSimName(e.target.value)}
+      />
+    </div>
+     
+  </div>
+  <div className='w-auto max-w-96 flex mt-4'>
+    <button type='submit' className='w-1/2 mr-5 px-3 py-2 ring-ft-light bg-ft-light text-white rounded ring-1 active:bg-ft active:ring-ft'>Save</button>
+    <button type='button' className='w-1/2 rounded px-3 py-2 ring-1 ring-ft-light' onClick={()=> closeEditMobile()}>
+      Cancel
+    </button>
+  </div>
+</form>
+</div>
+</div>
+</div>
+<div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
+<div className="flex">
+  <table className=" flex w-full bg-white">
+    <thead className="sm:w-1/5 w-2/5 text-white">
+    {event || event.length !== 0 ?event.map((campaignMobileHead) => {
+        return (
+      <tr className="pl-1 bg-ft-light flex flex-col mb-2 border border-slate-300" key={campaignMobileHead.eventId}>
+
+            <th className='h-6 font-normal'>Start Date</th>
+            <th className='h-6 font-normal'>End Date</th>
+        
+        <th className='h-12 font-normal'>Event(Eng)</th>
+        <th className='h-12 font-normal'>Event(Trad Chi)</th>
+        <th className='h-12 font-normal'>Event(Simp Chi)</th>
+        <th className='h-8 font-normal'>Edit</th>
+        <th className='h-8 font-normal mb-1'>Delete</th>
+      </tr>
+
+        );}):""}
+       
+    
+    
+    </thead>
+    <tbody className="sm:w-4/5 w-3/5 ">
+    {event.map((campaign) => {
+       const startDate = new Date(campaign.startDate);
+       const endDate = new Date(campaign.endDate);
+       const formattedStartDate = startDate.toISOString().slice(0, 10);
+       const formattedEndDate = endDate.toISOString().slice(0, 10);
+
+        return (
+          <tr className="flex flex-col border border-slate-300 mb-2" key={campaign.eventId}>
+          
+                 
+            <td className='pl-3 pr-3 h-6'>{formattedStartDate}</td>
+            <td className='pl-3 pr-3 h-6'>{formattedEndDate}</td>
+            <td className='pl-3 pr-3 h-12'>{campaign.eventEngName}</td>
+            <td className='pl-3 pr-3 h-12'>{campaign.eventChiName}</td>
+            <td className='pl-3 pr-3 h-12'>{campaign.eventSimName}</td>       
+
+
+
+<td className='pl-3 pr-3 h-8'>
+            <a onClick={() => showEditMobile(campaign)}>
+                <svg className='campaign h-6' fill="none"  viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+                </svg>
+            </a>
+              
+            </td>
+
+
+            <td className='pl-3 pr-3 h-8 mb-1'>
+        <a onClick={() => handleDelete(campaign.eventId)}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#009188" className="w-6 h-6 ">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+            </svg>
+        </a>
+        </td>
+            
+           
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
+<div className="flex flex-col items-center">
+<div>
+  {pagination.totalNumberOfRecords===0?<p className="text-sm text-gray-700">
+  No items to show...</p>:<p className="text-sm text-gray-700">
+    Showing<span className="font-medium"> {preResult}</span> to <span className="font-medium">{nextResult}</span> of{' '}
+    <span className="font-medium">{(pagination.totalNumberOfRecords)}</span> results
+  </p>}
+</div>
+{pagination && pagination.totalNumberOfRecords > 0 && (
+    <Stack spacing={2}>
+      <Pagination
+        page={parseInt(pagination.pageNumber + 1)}
+        shape={'circular'}
+        count={
+          pagination.totalNumberOfRecords && pagination.pageSize && !isNaN(pagination.totalNumberOfRecords) && !isNaN(pagination.pageSize)
+            ? parseInt(Math.trunc(pagination.totalNumberOfRecords / pagination.pageSize) + 1)
+            : 0
+        }
+        onChange={(e, value) => handlePageChange(value)}
+      />
+    </Stack>
+  )}
+</div>
+<ScrollToTopButton />
+</div>
+</>)
+:
+(
       <div className='w-deflaut px-2'>
         <div className='flex justify-content-between align-items-center my-3'>
           <div className=''>
             <h1>Event Calendar</h1>
           </div>
           <div onClick={openModal}>
-          <a href='#EnableJavascript' className={'text-white bg-ft-light rounded px-3 py-2'}>
+          <a className={'text-white bg-ft-light rounded px-3 py-2'}>
             Create
           </a>
       </div>
@@ -506,7 +853,7 @@ function EventCalendar(props) {
                     <td className=''><div className='w-linkRes line-clamp-2 items-center align-middle' >{campaign.eventChiName}</div></td>
                     <td className=''><div className='w-linkRes line-clamp-2 items-center align-middle' >{campaign.eventSimName}</div></td>
                     <td className=''>
-                    <a href='#EnableJavascript' onClick={() => openEdit(campaign)}>
+                    <a onClick={() => openEdit(campaign)}>
                         <svg className='campaign h-8' fill="none"  viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
                         </svg>
@@ -514,7 +861,7 @@ function EventCalendar(props) {
                     
                     </td>
                     <td className='relative'>
-                <a href='#EnableJavascript' onClick={() => handleDelete(campaign.eventId)}>
+                <a onClick={() => handleDelete(campaign.eventId)}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#009188" className="w-6 h-6 absolute top-1/2 transform -translate-y-1/2 right-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                     </svg>
@@ -553,7 +900,7 @@ function EventCalendar(props) {
         </div>
       </div>
     </div>
-  </div>
+  </div>)}
             </>
   )}
 
